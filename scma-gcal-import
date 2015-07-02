@@ -116,14 +116,12 @@ end
 def extract_event_lines(page)
     event_text = ""
     events = []
-    page.search("tr").each do |row|
-        row_text = row.text.strip.remove_nbsp.collapse_whitespace
-
-        if row_text == " "
+    page.search("tr").map { |row| row.text.strip.remove_nbsp.collapse_whitespace }.each do |text|
+        if text == " "
             events.push(event_text)
             event_text = ""
         else
-            event_text += row_text
+            event_text += text
         end
     end
 
