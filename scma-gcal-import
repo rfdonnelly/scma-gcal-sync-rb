@@ -12,139 +12,139 @@ require 'mechanize'
 require 'date'
 
 class String
-    def remove_nbsp
-        gsub("\u00A0", ' ')
-    end
+  def remove_nbsp
+    gsub("\u00A0", ' ')
+  end
 
-    def collapse_whitespace
-        gsub(/\s+/, ' ')
-    end
+  def collapse_whitespace
+    gsub(/\s+/, ' ')
+  end
 end
 
 class MatchData
-    def to_hash
-        Hash[names.zip(captures)]
-    end
+  def to_hash
+    Hash[names.zip(captures)]
+  end
 end
 
 class Event
-    attr_accessor :subject, :start_date, :end_date, :location
+  attr_accessor :subject, :start_date, :end_date, :location
 
-    def initialize(event_hash)
-        event_hash.each do |k, v|
-            send("#{k}=", v)
-        end
-
-        sanitize!
+  def initialize(event_hash)
+    event_hash.each do |k, v|
+      send("#{k}=", v)
     end
 
-    def to_gcal_csv
-        "\"#{subject}\", #{csv_date(start_date)}, , #{csv_date(end_date)}, , True, \"#{location}\""
+    sanitize!
+  end
+
+  def to_gcal_csv
+    "\"#{subject}\", #{csv_date(start_date)}, , #{csv_date(end_date)}, , True, \"#{location}\""
+  end
+
+  def sanitize!
+    @subject = "SCMA: " + @subject.strip.sub(/,$/, "")
+    @location.strip!
+
+    @start_date = date_from_string(@start_date)
+    @end_date = date_from_string(@end_date)
+
+    # WORKAROUND bug(?) in Google Calendar
+    # All day events spanning multiple days show as 1 day short.
+    # Add one day to end date to compensate.
+    if @end_date != @start_date
+      @end_date += 1
     end
+  end
 
-    def sanitize!
-        @subject = "SCMA: " + @subject.strip.sub(/,$/, "")
-        @location.strip!
+  def date_from_string(s)
+    Date.strptime(s, "%m/%d/%y")
+  end
 
-        @start_date = date_from_string(@start_date)
-        @end_date = date_from_string(@end_date)
-
-        # WORKAROUND bug(?) in Google Calendar
-        # All day events spanning multiple days show as 1 day short.
-        # Add one day to end date to compensate.
-        if @end_date != @start_date
-            @end_date += 1
-        end
-    end
-
-    def date_from_string(s)
-        Date.strptime(s, "%m/%d/%y")
-    end
-
-    def csv_date(date)
-        date.strftime("%m/%d/%Y")
-    end
+  def csv_date(date)
+    date.strftime("%m/%d/%Y")
+  end
 end
 
 class Output
-    def header
-    end
+  def header
+  end
 
-    def entry(entry)
-    end
+  def entry(entry)
+  end
 
-    def footer
-    end
+  def footer
+  end
 end
 
 class CSVOutput < Output
-    def header
-        "Subject, Start Date, Start Time, End Date, End Time, All Day Event, Location"
-    end
+  def header
+    "Subject, Start Date, Start Time, End Date, End Time, All Day Event, Location"
+  end
 
-    def entry(entry)
-        entry.to_gcal_csv
-    end
+  def entry(entry)
+    entry.to_gcal_csv
+  end
 end
 
 def make_agent()
-    agent = Mechanize.new
-    agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    agent
+  agent = Mechanize.new
+  agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  agent
 end
 
 def login(agent, username, password)
-    agent.post("https://www.rockclimbing.org/index.php/component/comprofiler/login", {
-        "username" => username,
-        "passwd" => password
-    })
+  agent.post("https://www.rockclimbing.org/index.php/component/comprofiler/login", {
+    "username" => username,
+    "passwd" => password
+  })
 
-    # FIXME add check for invalid login
+  # FIXME add check for invalid login
 end
 
 def get_events_page_remote(username, password)
-    agent = make_agent()
-    login(agent, username, password)
-    agent.get("https://www.rockclimbing.org/index.php/event-list/events-list")
+  agent = make_agent()
+  login(agent, username, password)
+  agent.get("https://www.rockclimbing.org/index.php/event-list/events-list")
 end
 
 def get_events_page_local()
-    # FIXME make a command line option
-    Nokogiri::HTML(File.open("events.html"))
+  # FIXME make a command line option
+  Nokogiri::HTML(File.open("events.html"))
 end
 
 def extract_event_lines(page)
-    event_text = ""
-    events = []
-    page.search("tr").map { |row| row.text.strip.remove_nbsp.collapse_whitespace }.each do |text|
-        if text == " "
-            events.push(event_text)
-            event_text = ""
-        else
-            event_text += text
-        end
+  event_text = ""
+  events = []
+  page.search("tr").map { |row| row.text.strip.remove_nbsp.collapse_whitespace }.each do |text|
+    if text == " "
+      events.push(event_text)
+      event_text = ""
+    else
+      event_text += text
     end
+  end
 
-    events
+  events
 end
 
 def parse_event(event_line)
-    event_line.match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @ (?<location>.+)/).to_hash
+  event_line.match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @ (?<location>.+)/).to_hash
 end
 
 def main
-    username, password = ARGV
+  username, password = ARGV
 
-    # FIXME make commandline option to select input source
-    page = get_events_page_remote(username, password)
-    #page = get_events_page_local()
-    
-    output = CSVOutput.new
-    puts output.header
-    extract_event_lines(page).map{|line| Event.new(parse_event(line))}.each do |event|
-        puts output.entry(event)
-    end
-    puts output.footer
+  # FIXME make commandline option to select input source
+  page = get_events_page_remote(username, password)
+  #page = get_events_page_local()
+
+  output = CSVOutput.new
+  puts output.header
+  extract_event_lines(page).map{|line| Event.new(parse_event(line))}.each do |event|
+    puts output.entry(event)
+  end
+  puts output.footer
 end
 
 main
