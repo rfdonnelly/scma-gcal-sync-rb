@@ -57,6 +57,10 @@ class Event
     end
   end
 
+  def to_s
+      [subject, [start_date, end_date].join(" - "), location].join("\n")
+  end
+
   def date_from_string(s)
     Date.strptime(s, "%m/%d/%y")
   end
@@ -85,6 +89,12 @@ class CSVOutput < Output
   def entry(entry)
     entry.to_gcal_csv
   end
+end
+
+class ConsoleOutput < Output
+    def entry(entry)
+        entry.to_s + "\n" * 2
+    end
 end
 
 def make_agent()
