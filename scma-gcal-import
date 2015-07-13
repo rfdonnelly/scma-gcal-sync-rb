@@ -21,25 +21,6 @@ class String
   end
 end
 
-class Array
-  def slice_after(&block)
-    current = []
-    output = [current]
-
-    self.each_with_index do |element, i|
-      last = (i == self.size - 1)
-      current.push(element)
-
-      if !last && block.call(element) 
-        current = []
-        output.push(current)
-      end
-    end
-
-    output
-  end
-end
-
 class MatchData
   def to_hash
     Hash[names.zip(captures)]
@@ -144,8 +125,8 @@ end
 
 def extract_event_lines(page)
   page.search("tr").map { |row| row.text.remove_nbsp.collapse_whitespace.strip }
-    .slice_after { |after| after.empty? }
-    .each_with_object([]) { |event_lines, events| events.push(event_lines.join(" ")) }
+    .chunk { |line| !line.empty? || nil }
+    .map { |_, event_lines| event_lines.join(" ") }
 end
 
 def parse_event(event_line)
