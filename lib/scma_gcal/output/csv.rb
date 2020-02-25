@@ -1,6 +1,11 @@
-class CSVOutput
+class CSV
   def header
     "Subject, Start Date, Start Time, End Date, End Time, All Day Event, Location"
+  end
+
+  def write(events)
+    puts header
+    events.each { |event| puts entry(event) }
   end
 
   def entry(entry)

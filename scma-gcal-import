@@ -11,6 +11,8 @@
 require 'mechanize'
 require 'date'
 
+require_relative 'lib/scma_gcal/model/event'
+require_relative 'lib/scma_gcal/input/web'
 require_relative 'lib/scma_gcal/output/csv'
 require_relative 'lib/scma_gcal/core_extensions'
 
@@ -18,89 +20,15 @@ String.include CoreExtensions::String::RemoveNBSP
 String.include CoreExtensions::String::CollapseWhitespace
 MatchData.include CoreExtensions::MatchData::ToHash
 
-class Event
-  attr_accessor :subject, :start_date, :end_date, :location
-
-  def initialize(event_hash)
-    event_hash.each do |k, v|
-      send("#{k}=", v)
-    end
-
-    sanitize!
-  end
-
-  def sanitize!
-    @subject = "SCMA: " + @subject.strip.sub(/,$/, "")
-    @location.strip!
-
-    @start_date = date_from_string(@start_date)
-    @end_date = date_from_string(@end_date)
-
-    # WORKAROUND bug(?) in Google Calendar
-    # All day events spanning multiple days show as 1 day short.
-    # Add one day to end date to compensate.
-    if @end_date != @start_date
-      @end_date += 1
-    end
-  end
-
-  def to_s
-      [subject, [start_date, end_date].join(" - "), location].join("\n")
-  end
-
-  def date_from_string(s)
-    Date.strptime(s, "%m/%d/%y")
-  end
-end
-
-def make_agent()
-  agent = Mechanize.new
-  agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
-  agent
-end
-
-def login(agent, username, password)
-  agent.post("https://www.rockclimbing.org/index.php/component/comprofiler/login", {
-    "username" => username,
-    "passwd" => password
-  })
-
-  # FIXME add check for invalid login
-end
-
-def get_events_page_remote(username, password)
-  agent = make_agent()
-  login(agent, username, password)
-  agent.get("https://www.rockclimbing.org/index.php/event-list/events-list")
-end
-
-def get_events_page_local()
-  # FIXME make a command line option
-  Nokogiri::HTML(File.open("events.html"))
-end
-
-def extract_event_lines(page)
-  page.search("tr").map { |row| row.text.remove_nbsp.collapse_whitespace.strip }
-    .chunk { |line| !line.empty? || nil }
-    .map { |_, event_lines| event_lines.join(" ") }
-end
-
-def parse_event(event_line)
-  event_line.match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @ (?<location>.+)/).to_hash
-end
 
 def main
   username, password = ARGV
 
-  # FIXME make commandline option to select input source
-  page = get_events_page_remote(username, password)
-  #page = get_events_page_local()
+  input = Web.new(username, password)
 
-  output = CSVOutput.new
-  puts output.header
-  extract_event_lines(page).map{|line| Event.new(parse_event(line))}.each do |event|
-    puts output.entry(event)
-  end
+  events = input.events
+
+  CSV.new.write(events)
 end
 
 main
