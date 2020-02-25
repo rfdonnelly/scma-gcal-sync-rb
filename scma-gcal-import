@@ -10,7 +10,9 @@
 
 require 'mechanize'
 require 'date'
+require 'optparse'
 
+require_relative 'lib/scma_gcal/option_parser'
 require_relative 'lib/scma_gcal/model/event'
 require_relative 'lib/scma_gcal/input/web'
 require_relative 'lib/scma_gcal/output/csv'
@@ -21,9 +23,9 @@ String.include CoreExtensions::String::CollapseWhitespace
 MatchData.include CoreExtensions::MatchData::ToHash
 
 def main
-  username, password = ARGV
+  options = SCMAGCal::OptionParser.new.parse(ARGV.clone)
 
-  input = Web.new(username, password)
+  input = Web.new(options.username, options.password)
 
   events = input.read
 
