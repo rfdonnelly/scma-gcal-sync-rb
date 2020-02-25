@@ -25,7 +25,7 @@ def main
 
   input = Web.new(username, password)
 
-  events = input.events
+  events = input.read
 
   CSV.new.write(events)
 end

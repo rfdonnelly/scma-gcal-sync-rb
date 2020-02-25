@@ -43,7 +43,7 @@ class Web
     event_line.match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @ (?<location>.+)/).to_hash
   end
 
-  def events
+  def read
     # FIXME make commandline option to select input source
     page = get_events_page_remote(username, password)
     #page = get_events_page_local()
