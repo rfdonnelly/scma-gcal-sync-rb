@@ -21,4 +21,3 @@ class CSV
     date.strftime("%m/%d/%Y")
   end
 end
-

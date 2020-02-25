@@ -20,7 +20,6 @@ String.include CoreExtensions::String::RemoveNBSP
 String.include CoreExtensions::String::CollapseWhitespace
 MatchData.include CoreExtensions::MatchData::ToHash
 
-
 def main
   username, password = ARGV
 
