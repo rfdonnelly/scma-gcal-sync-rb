@@ -11,21 +11,12 @@
 require 'mechanize'
 require 'date'
 
-class String
-  def remove_nbsp
-    gsub("\u00A0", ' ')
-  end
+require_relative 'lib/scma_gcal/output/csv'
+require_relative 'lib/scma_gcal/core_extensions'
 
-  def collapse_whitespace
-    gsub(/\s+/, ' ')
-  end
-end
-
-class MatchData
-  def to_hash
-    Hash[names.zip(captures)]
-  end
-end
+String.include CoreExtensions::String::RemoveNBSP
+String.include CoreExtensions::String::CollapseWhitespace
+MatchData.include CoreExtensions::MatchData::ToHash
 
 class Event
   attr_accessor :subject, :start_date, :end_date, :location
@@ -36,10 +27,6 @@ class Event
     end
 
     sanitize!
-  end
-
-  def to_gcal_csv
-    "\"#{subject}\", #{csv_date(start_date)}, , #{csv_date(end_date)}, , True, \"#{location}\""
   end
 
   def sanitize!
@@ -64,37 +51,6 @@ class Event
   def date_from_string(s)
     Date.strptime(s, "%m/%d/%y")
   end
-
-  def csv_date(date)
-    date.strftime("%m/%d/%Y")
-  end
-end
-
-class Output
-  def header
-  end
-
-  def entry(entry)
-  end
-
-  def footer
-  end
-end
-
-class CSVOutput < Output
-  def header
-    "Subject, Start Date, Start Time, End Date, End Time, All Day Event, Location"
-  end
-
-  def entry(entry)
-    entry.to_gcal_csv
-  end
-end
-
-class ConsoleOutput < Output
-    def entry(entry)
-        entry.to_s + "\n" * 2
-    end
 end
 
 def make_agent()
@@ -145,7 +101,6 @@ def main
   extract_event_lines(page).map{|line| Event.new(parse_event(line))}.each do |event|
     puts output.entry(event)
   end
-  puts output.footer
 end
 
 main
