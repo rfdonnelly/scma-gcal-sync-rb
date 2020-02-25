@@ -8,11 +8,13 @@
 require 'mechanize'
 require 'date'
 require 'optparse'
+require 'yaml'
 
-require_relative 'lib/scma_gcal/option_parser'
 require_relative 'lib/scma_gcal/model/event'
 require_relative 'lib/scma_gcal/input/web'
 require_relative 'lib/scma_gcal/output/csv'
+require_relative 'lib/scma_gcal/output/yaml'
+require_relative 'lib/scma_gcal/option_parser'
 require_relative 'lib/scma_gcal/core_extensions'
 
 String.include CoreExtensions::String::RemoveNBSP
@@ -26,7 +28,7 @@ def main
 
   events = input.read
 
-  CSV.new.write(events)
+  options.output.write(events)
 end
 
 main

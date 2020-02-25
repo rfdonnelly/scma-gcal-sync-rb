@@ -2,11 +2,14 @@ module SCMAGCal
   Options = Struct.new(
     :username,
     :password,
+    :output,
   )
 
   class OptionParser
     def defaults
       options = Options.new
+      options.output = CSV.new
+      options
     end
 
     def parse(argv)
@@ -20,6 +23,17 @@ module SCMAGCal
         end
         op.on('-pPASSWORD', '--password=PASSWORD', 'Password for rockclimbing.org') do |arg|
           options.password = arg
+        end
+
+        op.on('-oOUTPUT', '--output=OUTPUT', 'Output format.  One of: csv or yaml.  Default: csv') do |arg|
+          case arg
+          when 'csv'
+            options.output = CSV.new
+          when 'yaml'
+            options.output = SCMAGCal::Output::YAML.new
+          else
+            raise 'unrecognized output format for the --output option'
+          end
         end
 
         op.on('-h', '--help', 'Print this help') do
