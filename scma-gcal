@@ -4,9 +4,6 @@
 #
 # Note: Does not handle duplicates.  If you import same event multiple times,
 # you will get multiple of the same event.
-#
-# Usage:
-# scma_events <username> <password>
 
 require 'mechanize'
 require 'date'
