@@ -15,7 +15,7 @@ module SCMAGCal
       input =
         case options.input
         when :web
-          Web.new(options.username, options.password)
+          SCMAGCal::Input::Web.new(options.username, options.password)
         when :yaml
           SCMAGCal::Input::YAML.new(options.file)
         end

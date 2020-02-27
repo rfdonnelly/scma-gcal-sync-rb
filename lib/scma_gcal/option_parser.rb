@@ -10,7 +10,7 @@ module SCMAGCal
   class OptionParser
     def defaults
       options = Options.new
-      options.output = CSV.new
+      options.output = SCMAGCal::Output::CSV.new
       options.input = :web
       options
     end
@@ -46,7 +46,7 @@ module SCMAGCal
         op.on('-oOUTPUT', '--output=OUTPUT', 'Output format.  One of: csv or yaml.  Default: csv') do |arg|
           case arg
           when 'csv'
-            options.output = CSV.new
+            options.output = SCMAGCal::Output::CSV.new
           when 'yaml'
             options.output = SCMAGCal::Output::YAML.new
           else

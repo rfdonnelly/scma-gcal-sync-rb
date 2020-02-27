@@ -10,7 +10,7 @@ module SCMAGCal
       def read
         ::YAML
           .load_file(file)
-          .map { |entry| Event.new(entry) }
+          .map { |entry| SCMAGCal::Model::Event.new(entry) }
       end
     end
   end
