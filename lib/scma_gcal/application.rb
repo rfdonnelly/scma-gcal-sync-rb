@@ -27,6 +27,8 @@ module SCMAGCal
           SCMAGCal::Output::CSV.new
         elsif options.output == SCMAGCal::Output::YAML
           SCMAGCal::Output::YAML.new
+        elsif options.output == SCMAGCal::Output::GCal
+          SCMAGCal::Output::GCal.new
         end
 
       events = input.read

@@ -43,12 +43,14 @@ module SCMAGCal
           end
         end
 
-        op.on('-oOUTPUT', '--output=OUTPUT', 'Output format.  One of: csv or yaml.  Default: csv') do |arg|
+        op.on('-oOUTPUT', '--output=OUTPUT', 'Output format.  One of: csv, gcal, yaml.  Default: csv') do |arg|
           case arg
           when 'csv'
             options.output = SCMAGCal::Output::CSV
           when 'yaml'
             options.output = SCMAGCal::Output::YAML
+          when 'gcal'
+            options.output = SCMAGCal::Output::GCal
           else
             raise SCMAGCal::Error, 'unrecognized output format for the --output option'
           end
