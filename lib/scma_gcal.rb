@@ -1,6 +1,6 @@
-require 'mechanize'
-require 'date'
 require 'optparse'
+require 'date'
+require 'mechanize'
 require 'yaml'
 
 require_relative 'scma_gcal/error'
