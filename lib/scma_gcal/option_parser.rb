@@ -10,8 +10,8 @@ module SCMAGCal
   class OptionParser
     def defaults
       options = Options.new
-      options.output = SCMAGCal::Output::CSV.new
-      options.input = :web
+      options.input = SCMAGCal::Input::Web
+      options.output = SCMAGCal::Output::CSV
       options
     end
 
@@ -35,9 +35,9 @@ module SCMAGCal
         op.on('-iINPUT', '--input=INPUT', 'Input type: yaml, web. Default: web') do |arg|
           case arg
           when 'web'
-            options.input = :web
+            options.input = SCMAGCal::Input::Web
           when 'yaml'
-            options.input = :yaml
+            options.input = SCMAGCal::Input::YAML
           else
             raise SCMAGCal::Error, 'unrecognized input type for the --input option'
           end
@@ -46,9 +46,9 @@ module SCMAGCal
         op.on('-oOUTPUT', '--output=OUTPUT', 'Output format.  One of: csv or yaml.  Default: csv') do |arg|
           case arg
           when 'csv'
-            options.output = SCMAGCal::Output::CSV.new
+            options.output = SCMAGCal::Output::CSV
           when 'yaml'
-            options.output = SCMAGCal::Output::YAML.new
+            options.output = SCMAGCal::Output::YAML
           else
             raise SCMAGCal::Error, 'unrecognized output format for the --output option'
           end
@@ -68,11 +68,10 @@ module SCMAGCal
     end
 
     def validate(options)
-      case options.input
-      when :web
+      if options.input == SCMAGCal::Input::Web
         raise SCMAGCal::Error, 'the web input requires the --username option' if options.username.nil?
         raise SCMAGCal::Error, 'the web input requires the --password option' if options.password.nil?
-      when :yaml
+      elsif options.input == SCMAGCal::Input::YAML
         raise SCMAGCal::Error, 'the yaml input requires the --file option' if options.file.nil?
       end
     end

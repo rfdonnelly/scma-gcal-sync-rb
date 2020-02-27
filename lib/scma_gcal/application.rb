@@ -16,16 +16,22 @@ module SCMAGCal
       options = SCMAGCal::OptionParser.new.parse(argv.clone)
 
       input =
-        case options.input
-        when :web
+        if options.input == SCMAGCal::Input::Web
           SCMAGCal::Input::Web.new(options.username, options.password)
-        when :yaml
+        elsif options.input == SCMAGCal::Input::YAML
           SCMAGCal::Input::YAML.new(options.file)
+        end
+
+      output =
+        if options.output == SCMAGCal::Output::CSV
+          SCMAGCal::Output::CSV.new
+        elsif options.output == SCMAGCal::Output::YAML
+          SCMAGCal::Output::YAML.new
         end
 
       events = input.read
 
-      options.output.write(events)
+      output.write(events)
     end
 
     def error(message)
