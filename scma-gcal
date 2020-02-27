@@ -12,6 +12,7 @@ require 'yaml'
 
 require_relative 'lib/scma_gcal/model/event'
 require_relative 'lib/scma_gcal/input/web'
+require_relative 'lib/scma_gcal/input/yaml'
 require_relative 'lib/scma_gcal/output/csv'
 require_relative 'lib/scma_gcal/output/yaml'
 require_relative 'lib/scma_gcal/option_parser'
@@ -24,7 +25,13 @@ MatchData.include CoreExtensions::MatchData::ToHash
 def main
   options = SCMAGCal::OptionParser.new.parse(ARGV.clone)
 
-  input = Web.new(options.username, options.password)
+  input =
+    case options.input
+    when :web
+      Web.new(options.username, options.password)
+    when :yaml
+      SCMAGCal::Input::YAML.new(options.file)
+    end
 
   events = input.read
 
