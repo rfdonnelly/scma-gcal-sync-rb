@@ -5,22 +5,6 @@
 # Note: Does not handle duplicates.  If you import same event multiple times,
 # you will get multiple of the same event.
 
-require 'mechanize'
-require 'date'
-require 'optparse'
-require 'yaml'
-
-require_relative 'lib/scma_gcal/application'
-require_relative 'lib/scma_gcal/model/event'
-require_relative 'lib/scma_gcal/input/web'
-require_relative 'lib/scma_gcal/input/yaml'
-require_relative 'lib/scma_gcal/output/csv'
-require_relative 'lib/scma_gcal/output/yaml'
-require_relative 'lib/scma_gcal/option_parser'
-require_relative 'lib/scma_gcal/core_extensions'
-
-String.include CoreExtensions::String::RemoveNBSP
-String.include CoreExtensions::String::CollapseWhitespace
-MatchData.include CoreExtensions::MatchData::ToHash
+require_relative 'lib/scma_gcal'
 
 SCMAGCal::Application.new.run(ARGV)
