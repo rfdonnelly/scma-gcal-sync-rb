@@ -49,6 +49,28 @@ class Web
     #page = get_events_page_local()
     
     extract_event_lines(page)
-      .map { |line| Event.new(parse_event(line)) }
+      .map { |line| make_event(parse_event(line)) }
+  end
+
+  def make_event(event_hash)
+    event = Event.new(event_hash)
+
+    event.subject = "SCMA: " + event.subject.strip.sub(/,$/, "")
+    event.location = event.location.strip
+    event.start_date = date_from_s(event.start_date)
+    event.end_date = date_from_s(event.end_date)
+
+    # WORKAROUND bug(?) in Google Calendar
+    # All day events spanning multiple days show as 1 day short.
+    # Add one day to end date to compensate.
+    if event.end_date != event.start_date
+      event.end_date += 1
+    end
+
+    event
+  end
+
+  def date_from_s(s)
+    Date.strptime(s, "%m/%d/%y")
   end
 end
