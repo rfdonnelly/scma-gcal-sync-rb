@@ -39,7 +39,7 @@ module SCMAGCal
           when 'yaml'
             options.input = :yaml
           else
-            raise 'unrecognized input type for the --input option'
+            raise SCMAGCal::Error, 'unrecognized input type for the --input option'
           end
         end
 
@@ -50,7 +50,7 @@ module SCMAGCal
           when 'yaml'
             options.output = SCMAGCal::Output::YAML.new
           else
-            raise 'unrecognized output format for the --output option'
+            raise SCMAGCal::Error, 'unrecognized output format for the --output option'
           end
         end
 
@@ -70,10 +70,10 @@ module SCMAGCal
     def validate(options)
       case options.input
       when :web
-        raise 'missing --username option' if options.username.nil?
-        raise 'missing --password option' if options.password.nil?
+        raise SCMAGCal::Error, 'the web input requires the --username option' if options.username.nil?
+        raise SCMAGCal::Error, 'the web input requires the --password option' if options.password.nil?
       when :yaml
-        raise 'missing --file option' if options.file.nil?
+        raise SCMAGCal::Error, 'the yaml input requires the --file option' if options.file.nil?
       end
     end
   end

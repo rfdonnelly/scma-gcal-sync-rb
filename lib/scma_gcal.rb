@@ -3,6 +3,7 @@ require 'date'
 require 'optparse'
 require 'yaml'
 
+require_relative 'scma_gcal/error'
 require_relative 'scma_gcal/application'
 require_relative 'scma_gcal/option_parser'
 require_relative 'scma_gcal/input/web'

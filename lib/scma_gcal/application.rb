@@ -4,7 +4,10 @@ module SCMAGCal
       begin
         run_with_exceptions(argv)
       rescue SCMAGCal::Error => e
-        $stderr.puts e.message
+        error(e.message)
+        exit 1
+      rescue ::OptionParser::ParseError => e
+        error(e.message)
         exit 1
       end
     end
@@ -23,6 +26,13 @@ module SCMAGCal
       events = input.read
 
       options.output.write(events)
+    end
+
+    def error(message)
+      $stderr.puts message
+        .split("\n")
+        .map { |line| "error: #{line}" }
+        .join("\n")
     end
   end
 end
