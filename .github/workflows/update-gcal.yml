@@ -17,7 +17,7 @@ jobs:
         env:
           GCAL_CREDENTIALS: ${{ secrets.GCAL_CREDENTIALS }}
           GCAL_TOKEN: ${{ secrets.GCAL_TOKEN }}
-      - run: bundle exec scma-gcal -o gcal
+      - run: bundle exec scma-gcal -i web -o gcal
         env:
           SCMA_USERNAME: ${{ secrets.SCMA_USERNAME }}
           SCMA_PASSWORD: ${{ secrets.SCMA_PASSWORD }}
