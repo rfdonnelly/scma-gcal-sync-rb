@@ -6,6 +6,9 @@ jobs:
     name: Update
     runs-on: ubuntu-latest
     steps:
+      - env:
+        SCMA_USERNAME: ${{ secrets.SCMA_USERNAME }}
+        SCMA_PASSWORD: ${{ secrets.SCMA_PASSWORD }}
       - uses: actions/checkout@v2
       - uses: actions/setup-ruby@v1
         with:
