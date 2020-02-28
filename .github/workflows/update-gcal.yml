@@ -11,7 +11,13 @@ jobs:
         with:
           ruby-version: '2.7'
       - run: bundle install
-      - run: bundle exec scma-gcal
+      - run: |
+          echo "$GCAL_CREDENTIALS" > credentials.json
+          echo "$GCAL_TOKEN" > token.yml
+        env:
+          GCAL_CREDENTIALS: ${{ secrets.GCAL_CREDENTIALS }}
+          GCAL_TOKEN: ${{ secrets.GCAL_TOKEN }}
+      - run: bundle exec scma-gcal -o gcal
         env:
           SCMA_USERNAME: ${{ secrets.SCMA_USERNAME }}
           SCMA_PASSWORD: ${{ secrets.SCMA_PASSWORD }}
