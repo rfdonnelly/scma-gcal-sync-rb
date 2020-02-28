@@ -1,5 +1,9 @@
 name: Update Google Calendar
-on: push
+on: 
+  push:
+  schedule:
+    # Run every day at 2am
+    - cron: '0 2 * * *'
 
 jobs:
   build:
