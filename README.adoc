@@ -1,0 +1,23 @@
+= SCMA Google Calendar
+
+Fetches events from the SCMA (Southern California Mountaineer's Association) website and imports them into Google Calendar.
+
+== Examples
+
+=== Web to GCal
+
+Fetches events from the SCMA website and imports them into Google Calendar.
+
+ scma-gcal -u <scma-username> -p <scma-password> -o gcal
+
+=== Web to YAML
+
+Fetches events from the SCMA website and converts them to YAML.
+
+ scma-gcal -u <scma-username> -p <scma-password> -o yaml > events.yml
+
+=== YAML to GCal
+
+Reads events from a YAML file and import them into Google Calendar.
+
+ scma-gcal -i yaml -f events.yml -o gcal
