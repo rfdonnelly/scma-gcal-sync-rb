@@ -10,6 +10,8 @@ module SCMAGCal
   class OptionParser
     def defaults
       options = Options.new
+      options.username = ENV['SCMA_USERNAME']
+      options.password = ENV['SCMA_PASSWORD']
       options.input = SCMAGCal::Input::Web
       options.output = SCMAGCal::Output::CSV
       options
