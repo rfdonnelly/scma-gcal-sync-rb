@@ -12,11 +12,11 @@ Run:
 
 == Setup
 
-For the Google Calendar export feature, you need to follow "Step 1: Turn on the Google Calendar API" of the link:https://developers.google.com/calendar/quickstart/ruby[Google Calendar API Ruby Quickstart].
-Then run `scma-gcal` interactively with the `--output gcal` option and follow the instructions to generate a `token.yml` file. 
-
-Finally, create a Google Calendar named "SCMA".
+For the Google Calendar export feature, you need to first create a calendar named "SCMA".
 Events will be exported to this calendar.
+
+Next, follow "Step 1: Turn on the Google Calendar API" of the link:https://developers.google.com/calendar/quickstart/ruby[Google Calendar API Ruby Quickstart].
+Then run `scma-gcal` interactively with the `--output gcal` option and follow the instructions to generate a `token.yml` file. 
 
 == Examples
 
