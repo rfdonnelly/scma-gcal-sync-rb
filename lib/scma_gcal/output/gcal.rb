@@ -8,7 +8,7 @@ module SCMAGCal
       # created automatically when the authorization flow completes for the first
       # time.
       TOKEN_PATH = "token.yaml".freeze
-      SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR_READONLY
+      SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
 
       # The page size can never be larger than 250 entries
       MAX_CALENDAR_LISTS = 250
@@ -35,12 +35,37 @@ module SCMAGCal
           order_by: "startTime",
           time_min: DateTime.now.rfc3339,
         )
-        puts "Upcoming events:"
-        puts "No upcoming events found" if response.items.empty?
-        response.items.each do |event|
-          start = event.start.date || event.start.date_time
-          puts "- #{event.summary} (#{start})"
+        if !response.items.empty?
+          puts "Deleting events:"
+          response.items.each do |event|
+            start = event.start.date || event.start.date_time
+            puts "- #{event.summary} (#{start})"
+            service.delete_event(calendar_id, event.id)
+          end
         end
+
+        puts "Inserting events:"
+        events.each do |event|
+          gcal_event = make_gcal_event(event)
+          start = gcal_event.start.date
+          puts "- #{gcal_event.summary} (#{start})"
+          result = service.insert_event(calendar_id, gcal_event)
+        end
+      end
+
+      def make_gcal_event(event)
+        Google::Apis::CalendarV3::Event.new(
+          summary: event.subject,
+          location: event.location,
+          start: Google::Apis::CalendarV3::EventDateTime.new(
+            date: event.start_date,
+            time_zone: 'America/Los_Angeles'
+          ),
+          end: Google::Apis::CalendarV3::EventDateTime.new(
+            date: event.end_date,
+            time_zone: 'America/Los_Angeles'
+          ),
+        )
       end
 
       ##
@@ -59,7 +84,7 @@ module SCMAGCal
           url = authorizer.get_authorization_url base_url: OOB_URI
           puts "Open the following URL in the browser and enter the " \
             "resulting code after authorization:\n" + url
-          code = gets
+          code = $stdin.gets
           credentials = authorizer.get_and_store_credentials_from_code(
             user_id: user_id, code: code, base_url: OOB_URI
           )
