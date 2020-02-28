@@ -1,5 +1,7 @@
 = SCMA Google Calendar
 
+image::https://github.com/rfdonnelly/scma-gcal/workflows/Update%20Google%20Calendar/badge.svg[Update Google Calendar]
+
 Fetches events from the SCMA (Southern California Mountaineer's Association) website and imports them into Google Calendar.
 
 == Examples
