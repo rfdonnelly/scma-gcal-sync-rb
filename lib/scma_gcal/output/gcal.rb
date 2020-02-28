@@ -2,12 +2,12 @@ module SCMAGCal
   module Output
     class GCal
       OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
-      APPLICATION_NAME = "Google Calendar API Ruby Quickstart".freeze
+      APPLICATION_NAME = "SCMA GCal".freeze
       CREDENTIALS_PATH = "credentials.json".freeze
       # The file token.yaml stores the user's access and refresh tokens, and is
       # created automatically when the authorization flow completes for the first
       # time.
-      TOKEN_PATH = "token.yaml".freeze
+      TOKEN_PATH = "token.yml".freeze
       SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
 
       # The page size can never be larger than 250 entries
