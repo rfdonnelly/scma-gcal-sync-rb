@@ -2,7 +2,21 @@
 
 image::https://github.com/rfdonnelly/scma-gcal/workflows/Update%20Google%20Calendar/badge.svg[Update Google Calendar]
 
-Fetches events from the SCMA (Southern California Mountaineer's Association) website and imports them into Google Calendar.
+Fetches events from the SCMA (Southern California Mountaineer's Association) website and exports them to Google Calendar.
+
+== Install
+
+Run:
+
+ bundle install
+
+== Setup
+
+For the Google Calendar export feature, you need to follow "Step 1: Turn on the Google Calendar API" of the link:https://developers.google.com/calendar/quickstart/ruby[Google Calendar API Ruby Quickstart].
+Then run `scma-gcal` interactively with the `--output gcal` option and follow the instructions to generate a `token.yml` file. 
+
+Finally, create a Google Calendar named "SCMA".
+Events will be exported to this calendar.
 
 == Examples
 
