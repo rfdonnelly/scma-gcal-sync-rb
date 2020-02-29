@@ -1,9 +1,11 @@
 module SCMAGCal
   module Input
     class Web
+      BASE_URL = 'https://www.rockclimbing.org'
+
       class EventsPage
         def remote_page(agent)
-          agent.get("https://www.rockclimbing.org/index.php/event-list/events-list")
+          agent.get("#{BASE_URL}/index.php/event-list/events-list")
         end
 
         def local_page(path)
@@ -16,13 +18,25 @@ module SCMAGCal
         end
 
         def extract_event_lines(page)
-          page.search("tr").map { |row| row.text.remove_nbsp.collapse_whitespace.strip }
-            .chunk { |line| !line.empty? || nil }
-            .map { |_, event_lines| event_lines.join(" ") }
+          rows = page.search('tr')
+
+          rows
+            .select { |row| row.search('a').size == 2 }
+            .map do |row|
+              links = row.search('a')
+              {
+                text: row.text.remove_nbsp.collapse_whitespace.strip,
+                url: BASE_URL + links.first['href']
+              }
+            end
         end
 
         def parse_event(event_line)
-          event_line.match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @ (?<location>.+)/).to_hash
+          md = event_line[:text].match(/^(?<start_date>.+?) - (?<end_date>.+?) (?<subject>.+) @( (?<location>.+))?/)
+          raise "unable to parse event: '#{event_line}'" unless md
+          event_hash = {'url' => event_line[:url]}.merge(md.to_hash)
+          event_hash['location'] ||= ''
+          event_hash
         end
 
         def make_event(event_hash)
@@ -75,7 +89,6 @@ module SCMAGCal
         agent = make_agent
         login(agent, username, password)
         events_page = EventsPage.new
-
         events_page.parse(events_page.remote_page(agent))
       end
     end
