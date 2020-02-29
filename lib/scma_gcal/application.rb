@@ -28,7 +28,7 @@ module SCMAGCal
         elsif options.output == SCMAGCal::Output::YAML
           SCMAGCal::Output::YAML.new
         elsif options.output == SCMAGCal::Output::GCal
-          SCMAGCal::Output::GCal.new
+          SCMAGCal::Output::GCal.new(options.calendar)
         end
 
       events = input.read

@@ -5,6 +5,7 @@ module SCMAGCal
     :file,
     :input,
     :output,
+    :calendar,
   )
 
   class OptionParser
@@ -14,6 +15,7 @@ module SCMAGCal
       options.password = ENV['SCMA_PASSWORD']
       options.input = SCMAGCal::Input::Web
       options.output = SCMAGCal::Output::CSV
+      options.calendar = 'SCMA'
       options
     end
 
@@ -56,6 +58,10 @@ module SCMAGCal
           else
             raise SCMAGCal::Error, 'unrecognized output format for the --output option'
           end
+        end
+
+        op.on('--calendar=CALENDAR', "Name of the Google calendar to export events to. Default: #{options.calendar}") do |arg|
+          options.calendar = arg
         end
 
         op.on('-h', '--help', 'Print this help') do

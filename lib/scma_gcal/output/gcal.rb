@@ -1,6 +1,8 @@
 module SCMAGCal
   module Output
     class GCal
+      attr_reader :calendar_name
+
       OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
       APPLICATION_NAME = "SCMA GCal".freeze
       CREDENTIALS_PATH = "credentials.json".freeze
@@ -14,7 +16,10 @@ module SCMAGCal
       MAX_CALENDAR_LISTS = 250
       # The page size can never be larger than 2500 events.
       MAX_EVENTS = 2500
-      CALENDAR_NAME = "SCMA"
+
+      def initialize(calendar_name)
+        @calendar_name = calendar_name
+      end
 
       def write(events)
         # Initialize the API
@@ -25,7 +30,7 @@ module SCMAGCal
         calendar_id = service
           .list_calendar_lists(max_results: MAX_CALENDAR_LISTS)
           .items
-          .find { |entry| entry.summary == CALENDAR_NAME }
+          .find { |entry| entry.summary == calendar_name }
           .id
 
         response = service.list_events(
