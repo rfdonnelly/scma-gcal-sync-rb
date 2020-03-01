@@ -1,7 +1,7 @@
 module SCMAGCal
   module Model
     class Event
-      attr_accessor :subject, :start_date, :end_date, :location, :url
+      attr_accessor :subject, :start_date, :end_date, :location, :url, :description
 
       def initialize(event_hash)
         event_hash.each do |k, v|

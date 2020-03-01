@@ -92,6 +92,21 @@ module SCMAGCal
         end
       end
 
+      class EventPage
+        def remote_page(agent, url)
+          agent.get(url)
+        end
+
+        def local_page(path)
+          Nokogiri::HTML(File.open(path))
+        end
+
+        def parse_description(page)
+          description = page.css('.ohanah-event-full-description')
+          description.search('div').map { |div| div.text.strip }.join("\n")
+        end
+      end
+
       attr_reader :username
       attr_reader :password
 
@@ -119,7 +134,18 @@ module SCMAGCal
         agent = make_agent
         login(agent, username, password)
         events_page = EventsPage.new
-        events_page.parse(events_page.remote_page(agent))
+        $stderr.puts "Fetching events"
+        html = events_page.remote_page(agent)
+        events = events_page.parse(html)
+
+        events.each do |event|
+          event_page = EventPage.new
+          $stderr.puts "Fetching #{event.subject} --  #{event.url}"
+          html = event_page.remote_page(agent, event.url)
+          event.description = event_page.parse_description(html)
+        end
+
+        events
       end
     end
   end

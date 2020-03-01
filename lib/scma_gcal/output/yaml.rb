@@ -14,6 +14,7 @@ module SCMAGCal
           'end_date' => event.end_date,
           'location' => event.location,
           'url' => event.url,
+          'description' => event.description,
         }
       end
     end
