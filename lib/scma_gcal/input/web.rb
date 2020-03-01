@@ -13,8 +13,13 @@ module SCMAGCal
         end
 
         def parse(page)
-          extract_event_lines(page)
-            .map { |line| make_event(parse_event(line)) }
+          lines = extract_event_lines(page)
+
+          lines.map do |line|
+            event = parse_event(line)
+            event = make_event(event)
+            event
+          end
         end
 
         # Events are listed in a <table>.
