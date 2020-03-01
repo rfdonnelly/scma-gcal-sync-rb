@@ -17,6 +17,31 @@ module SCMAGCal
             .map { |line| make_event(parse_event(line)) }
         end
 
+        # Events are listed in a <table>.
+        #
+        # Each event spans two rows plus a separator row between events.
+        #
+        # The first event row contains two columns.  The first column contains
+        # a link to the event page, start date, and end date.  The second
+        # column contains a link to the event page, event title, and event
+        # location.
+        #
+        # The second event row also contains two columns.  The first column is
+        # empty.  The second column contains the event activity.  The event
+        # activity is normally a rephrasing of the event title so we ignore it.
+        #
+        # The separator row is empty with a single column that spans two columns.
+        #
+        # To parse this structure, we first search for all row (<tr>) tags.  Of
+        # these, we then select only the row which contain two link (<a>) tags.
+        # This throws out the event activity rows and the separator rows.
+        #
+        # Each of the remaining rows is converted into a hash that contains the
+        # event text (start date, end date, subject, location) and the event
+        # page URL.
+        #
+        # The event text contains non-breaking space and redundant whitespace
+        # so we remove and collapse these respectively.
         def extract_event_lines(page)
           rows = page.search('tr')
 
