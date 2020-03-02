@@ -7,6 +7,7 @@ module SCMAGCal
       attr_accessor :location
       attr_accessor :url
       attr_accessor :description
+      attr_accessor :comments
       attr_accessor :attendees
 
       def initialize(event_hash)
@@ -16,6 +17,14 @@ module SCMAGCal
       end
 
       def description_string
+        comments_string = comments.map do |comment|
+          '* %s (%s) %s' % [
+            comment['author'],
+            comment['time'],
+            comment['text'],
+          ]
+        end.join("\n")
+
         attendees_string = attendees.map do |attendee|
           '* %s (%s total) %s' % [
             attendee['attendee'],
@@ -26,6 +35,9 @@ module SCMAGCal
 
         <<~EOF
           #{description}
+
+          COMMENTS:
+          #{comments_string}
 
           ATTENDEES:
           #{attendees_string}

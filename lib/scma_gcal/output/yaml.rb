@@ -16,6 +16,7 @@ module SCMAGCal
           'url' => event.url,
           'description' => event.description,
           'attendees' => event.attendees,
+          'comments' => event.comments,
         }
       end
     end

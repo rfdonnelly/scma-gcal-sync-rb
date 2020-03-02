@@ -106,6 +106,18 @@ module SCMAGCal
           node_text(description).join.strip
         end
 
+        def parse_comments(page)
+          comments = page.css('.kmt-wrap')
+
+          comments.map do |comment|
+            {
+              'author' => comment.at_css('.kmt-author a').text.strip,
+              'text' => comment.at_css('.kmt-body').text.strip,
+              'time' => comment.at_css('.kmt-time time')['datetime'],
+            }
+          end
+        end
+
         def parse_attendees(page)
           attendee_spans = page.css('.who_avatars span')
           attendee_spans
@@ -182,6 +194,7 @@ module SCMAGCal
           html = event_page.remote_page(agent, event.url)
           event.description = event_page.parse_description(html)
           event.attendees = event_page.parse_attendees(html)
+          event.comments = event_page.parse_comments(html)
         end
 
         events

@@ -82,4 +82,30 @@ describe 'EventPage' do
       end
     end
   end
+
+  describe 'parse_comments' do
+    it 'works' do
+      input_expected = {
+        'fixtures/event1.html' => [
+        ],
+        'fixtures/event2.html' => [
+        ],
+        'fixtures/event3.html' => [
+          {
+            "author"=>"Rachel Wing",
+            "text"=>"Torn between this on Saturday and RCSC at Rubidoux -- is there any way to camp at Big Rock on Friday night ... and is anybody free to climb Friday afternoon?",
+            "time"=>"2020-02-04T17:57:06+00:00"
+          }
+        ],
+      }
+
+      o = SCMAGCal::Input::Web::EventPage.new
+      input_expected.each do |input, expected|
+        page = o.local_page(input)
+        actual = o.parse_comments(page)
+
+        actual.must_equal expected
+      end
+    end
+  end
 end
