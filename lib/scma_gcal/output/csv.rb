@@ -16,7 +16,7 @@ module SCMAGCal
           csv_date(entry.start_date),
           csv_date(entry.end_date),
           entry.location,
-          entry.url,
+          entry.description_string,
         ]
       end
 

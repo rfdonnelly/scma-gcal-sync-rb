@@ -51,4 +51,35 @@ describe 'EventPage' do
       end
     end
   end
+
+  describe 'parse_attendees' do
+    it 'works' do
+      input_expected = {
+        'fixtures/event1.html' => [
+          {'attendee'=>"Juan Carlos Marvizon", 'count'=>"1", "comment"=>"Willing to carpool. Available for evals. Looking for partners."},
+          {'attendee'=>"Humza Javed", 'count'=>"4", "comment"=>"HI Is there space on this trip for me to bring 3 guests? Thank you"},
+          {'attendee'=>"Joe Capoccia", 'count'=>"3", "comment"=>"Looking to bring my family if there are enough spots"},
+          {'attendee'=>"Justin Barham", 'count'=>"2", "comment"=>"Saturday night. Hope to stay in my car. Guest will tent."},
+          {'attendee'=>"Spencer Mathews", 'count'=>"1", "comment"=>"I may bring a guest, but no more than one vehicle."},
+          {'attendee'=>"Sherman Lam", 'count'=>"1", "comment"=>""},
+          {'attendee'=>"Rob Donnelly", 'count'=>"4", "comment"=>"1 car 1 tent 1-3 guests (family)"}
+        ],
+        'fixtures/event2.html' => [
+        ],
+        'fixtures/event3.html' => [
+          {'attendee'=>"LeRoy Russ", 'count'=>"1", "comment"=>""},
+          {'attendee'=>"Inge Mueller", 'count'=>"1", "comment"=>"Planning to help at RCSC on Saturday, camp at Big Rock and work with everyone on Sunday."},
+          {'attendee'=>"Sarah Barron", 'count'=>"1", "comment"=>"I'll be in Sat. evening, after finishing up with the RCSC #3 at Rubidoux. Hopefully in time for a little sunset climbing. ;-)  How do I enter if the gate is locked? THANKS!"}
+        ],
+      }
+
+      o = SCMAGCal::Input::Web::EventPage.new
+      input_expected.each do |input, expected|
+        page = o.local_page(input)
+        actual = o.parse_attendees(page)
+
+        actual.must_equal expected
+      end
+    end
+  end
 end

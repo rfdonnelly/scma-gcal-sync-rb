@@ -70,7 +70,7 @@ module SCMAGCal
             date: event.end_date,
             time_zone: 'America/Los_Angeles'
           ),
-          description: [event.description, event.url].join("\n"),
+          description: event.description_string,
         )
       end
 

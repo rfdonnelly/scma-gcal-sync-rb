@@ -106,6 +106,27 @@ module SCMAGCal
           node_text(description).join.strip
         end
 
+        def parse_attendees(page)
+          attendee_spans = page.css('.who_avatars span')
+          attendee_spans
+            .map { |span| span.text }
+            .each
+            .each_slice(2)
+            .map do |(attendee, data)|
+              count, comment = data
+                .gsub("\n", ' ')
+                .gsub("\r", '')
+                .remove_nbsp
+                .match(/\((\d+) total\)\s*(.*)/)
+                .captures
+              {
+                'attendee' => attendee,
+                'count' => count,
+                'comment' => comment,
+              }
+            end
+        end
+
         def node_text(node, text = [])
           case node.name
           when 'br', 'div', 'p'
@@ -160,6 +181,7 @@ module SCMAGCal
           $stderr.puts "Fetching #{event.subject} --  #{event.url}"
           html = event_page.remote_page(agent, event.url)
           event.description = event_page.parse_description(html)
+          event.attendees = event_page.parse_attendees(html)
         end
 
         events
