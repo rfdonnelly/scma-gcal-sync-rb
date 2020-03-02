@@ -3,6 +3,7 @@ module CoreExtensions
     module RemoveNBSP
       def remove_nbsp
         gsub("\u00A0", ' ')
+          .gsub("&nbsp;", '')
       end
     end
 

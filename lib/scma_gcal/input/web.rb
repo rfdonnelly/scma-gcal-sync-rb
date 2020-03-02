@@ -102,10 +102,12 @@ module SCMAGCal
         end
 
         def parse_description(page)
-          description = page.css('.ohanah-event-full-description > div')
-          description
-            .search('div')
-            .map { |div| div.text.strip }
+          description = page.css('.ohanah-event-full-description')
+          Sanitize.clean(description.to_html)
+            .strip
+            .remove_nbsp
+            .split("\n")
+            .map { |line| line.strip }
             .join("\n")
         end
       end

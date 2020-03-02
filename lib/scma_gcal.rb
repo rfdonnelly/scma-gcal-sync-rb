@@ -1,6 +1,7 @@
 require 'optparse'
 require 'date'
 require 'mechanize'
+require 'sanitize'
 require 'yaml'
 
 require "google/apis/calendar_v3"
