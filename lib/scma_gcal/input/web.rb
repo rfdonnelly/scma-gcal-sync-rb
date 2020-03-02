@@ -102,13 +102,25 @@ module SCMAGCal
         end
 
         def parse_description(page)
-          description = page.css('.ohanah-event-full-description')
-          Sanitize.clean(description.to_html)
-            .strip
-            .remove_nbsp
-            .split("\n")
-            .map { |line| line.strip }
-            .join("\n")
+          description = page.at_css('.ohanah-event-full-description')
+          node_text(description).join.strip
+        end
+
+        def node_text(node, text = [])
+          case node.name
+          when 'br', 'div', 'p'
+            if !text.empty?
+              text << "\n"
+            end
+          when 'text'
+            text << node.text.strip.gsub("\r", '')
+          end
+
+          node.children.each do |child|
+            node_text(child, text)
+          end
+
+          text
         end
       end
 
