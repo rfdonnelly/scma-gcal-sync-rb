@@ -1,5 +1,6 @@
 name: Update Google Calendar
-on: 
+on:
+  workflow_dispatch:
   push:
   schedule:
     # Run every day at 2am
