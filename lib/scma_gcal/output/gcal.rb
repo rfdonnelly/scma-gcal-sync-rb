@@ -42,10 +42,10 @@ module SCMAGCal
         )
         if !response.items.empty?
           puts "Deleting events:"
-          response.items.each do |event|
-            start = event.start.date || event.start.date_time
-            puts "- #{event.summary} (#{start})"
-            service.delete_event(calendar_id, event.id)
+          response.items.each do |item|
+            start = item.start.date || item.start.date_time
+            puts "- #{item.summary} (#{start})"
+            service.delete_event(calendar_id, item.id)
           end
         end
 
