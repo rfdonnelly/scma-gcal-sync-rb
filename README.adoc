@@ -46,7 +46,3 @@ Effectively, the time information is stripped.
 
 Pagination is not supported.
 SCMA events that are not on the first page of the events list are ignored.
-
-Event descriptions are not supported.
-Only the event list is parsed.
-The event page where the event description lives is not parsed.
