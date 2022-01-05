@@ -45,8 +45,9 @@ module SCMAGCal
         if !response.items.empty?
           puts "Deleting events:"
           response.items.each do |item|
-            start = item.start.date || item.start.date_time
-            puts "- #{item.summary} (#{start})"
+            start_date = eventdatetime_to_date(item.start)
+            end_date = eventdatetime_to_date(item.end)
+            puts "- #{item.summary} (#{start_date}/#{end_date})"
             service.delete_event(calendar_id, item.id) unless dry_run
           end
         end
@@ -54,10 +55,19 @@ module SCMAGCal
         puts "Inserting events:"
         events.each do |event|
           gcal_event = make_gcal_event(event)
-          start = gcal_event.start.date
-          puts "- #{gcal_event.summary} (#{start})"
+          start_date = event.start_date
+          end_date = event.end_date
+          puts "- #{gcal_event.summary} (#{start_date}/#{end_date})"
           result = service.insert_event(calendar_id, gcal_event) unless dry_run
         end
+      end
+
+      # Convert a Google::Apis::CalendarV3::EventDateTime to a Date
+      #
+      # An EventDateTime object contains either a date (if an
+      # all-day event) or a date_time (otherwise) but not both.
+      def eventdatetime_to_date(edt)
+        edt.date || edt.date_time.to_date
       end
 
       def make_gcal_event(event)
