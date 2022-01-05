@@ -2,6 +2,7 @@ module SCMAGCal
   module Output
     class GCal
       attr_reader :calendar_name
+      attr_reader :dry_run
 
       OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
       APPLICATION_NAME = "SCMA GCal".freeze
@@ -17,8 +18,9 @@ module SCMAGCal
       # The page size can never be larger than 2500 events.
       MAX_EVENTS = 2500
 
-      def initialize(calendar_name)
+      def initialize(calendar_name, dry_run:)
         @calendar_name = calendar_name
+        @dry_run = dry_run
       end
 
       def write(events)
@@ -45,7 +47,7 @@ module SCMAGCal
           response.items.each do |item|
             start = item.start.date || item.start.date_time
             puts "- #{item.summary} (#{start})"
-            service.delete_event(calendar_id, item.id)
+            service.delete_event(calendar_id, item.id) unless dry_run
           end
         end
 
@@ -54,7 +56,7 @@ module SCMAGCal
           gcal_event = make_gcal_event(event)
           start = gcal_event.start.date
           puts "- #{gcal_event.summary} (#{start})"
-          result = service.insert_event(calendar_id, gcal_event)
+          result = service.insert_event(calendar_id, gcal_event) unless dry_run
         end
       end
 

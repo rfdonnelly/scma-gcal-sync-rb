@@ -6,6 +6,7 @@ module SCMAGCal
     :input,
     :output,
     :calendar,
+    :dry_run,
   )
 
   class OptionParser
@@ -16,6 +17,7 @@ module SCMAGCal
       options.input = SCMAGCal::Input::Web
       options.output = SCMAGCal::Output::CSV
       options.calendar = 'SCMA'
+      options.dry_run = false
       options
     end
 
@@ -62,6 +64,10 @@ module SCMAGCal
 
         op.on('--calendar=CALENDAR', "Name of the Google calendar to export events to. Default: #{options.calendar}") do |arg|
           options.calendar = arg
+        end
+
+        op.on('-n', '--dry-run', 'Print Google calendar updates without actually performing the updates.') do
+          options.dry_run = true
         end
 
         op.on('-h', '--help', 'Print this help') do
