@@ -42,7 +42,20 @@ module SCMAGCal
           order_by: "startTime",
           time_min: DateTime.now.rfc3339,
         )
-        if !response.items.empty?
+
+        # The list_events time_min filter filters by end date.  This means
+        # list_events can return events that are in-progress (started but not
+        # yet ended).  While the SCMA events list page removes events when they
+        # start.  If we delete all events returned by list_events, we will end
+        # up deleting permanently deleting in-progress events from the
+        # calendar.  To account for this, we need to further filter the events
+        # returned by list_events by start date.
+        to_delete = response.items.reject do |item|
+          start_date = eventdatetime_to_date(item.start)
+          start_date < Date.today
+        end
+
+        if !to_delete.empty?
           puts "Deleting events:"
           response.items.each do |item|
             start_date = eventdatetime_to_date(item.start)
