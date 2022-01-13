@@ -57,7 +57,7 @@ module SCMAGCal
 
         if !to_delete.empty?
           puts "Deleting events:"
-          response.items.each do |item|
+          to_delete.each do |item|
             start_date = eventdatetime_to_date(item.start)
             end_date = eventdatetime_to_date(item.end)
             puts "- #{item.summary} (#{start_date}/#{end_date})"
