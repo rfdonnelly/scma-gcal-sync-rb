@@ -4,6 +4,8 @@ image::https://github.com/rfdonnelly/scma-gcal/workflows/Update%20Google%20Calen
 
 Fetches events from the link:https://rockclimbing.org[SCMA (Southern California Mountaineer's Association) website] and exports them to Google Calendar.
 
+IMPORTANT: This repository has been archived and superseded by https://github.com/rfdonnelly/scma-gcal-sync.
+
 == Install
 
 Run:
